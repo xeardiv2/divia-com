@@ -1,37 +1,25 @@
-# DIVIA
+# DIVIA + Hospital Evelyn
 
-Aplicación de telemedicina con Next.js, TypeScript, Cloudflare D1 y Cloudflare Stream.
+Plataforma de telemedicina, seguimiento clínico y cuidado integral.
 
-## Requisitos
+## Ejecutar en GitHub Codespaces
 
-- Node 18+
-- Cloudflare account
-- Wrangler CLI
-
-## Variables de entorno
-
-Copia `.env.example` a `.env.local` y completa tus valores reales.
-
-## Base de datos D1
+1. Abrí el repositorio en GitHub Codespaces.
+2. La configuración de `.devcontainer/devcontainer.json` ya prepara el entorno.
+3. Ejecutá:
 
 ```bash
 npm install
-npx wrangler d1 create divia-prod
-npm run db:init
+npm run dev
 ```
 
-## Deploy
+La app queda disponible en el puerto `3000` y se muestra con forwarding automático en Codespaces.
+
+## Scripts útiles
 
 ```bash
-npx wrangler deploy
+npm run dev
+npm run build
+npm run start
+npm run lint
 ```
-
-## Funcionalidades base
-
-- Registro de pacientes y profesionales
-- Validación de matrícula
-- Login con JWT
-- Lista de espera por profesional
-- Videollamada con Cloudflare Stream
-- Registro de signos vitales
-
