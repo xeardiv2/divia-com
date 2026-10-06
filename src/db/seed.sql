@@ -1,0 +1,3 @@
+-- Seed file for demo data.
+-- Professional and patient users can be created through the registration flow.
+-- Add real hashed credentials in your Cloudflare D1 database after deployment.

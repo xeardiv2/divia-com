@@ -1,84 +1,57 @@
-'use client';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { extractToken, verifyToken } from '@/lib/auth';
+import { initializeStreamService } from '@/lib/cloudflare-stream';
 
-import { useState, FormEvent } from 'react';
-import { useRouter } from 'next/router';
-import axios from 'axios';
-import toast from 'react-hot-toast';
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ success: false, message: 'Method not allowed' });
+  }
 
-export default function LoginForm() {
-  const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  try {
+    const token = extractToken(req.headers.authorization || null);
+    const auth = token ? verifyToken(token) : null;
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const response = await axios.post('/api/auth/login', { email, password });
-
-      if (response.data.success) {
-        localStorage.setItem('authToken', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        
-        toast.success('Inicio de sesión exitoso');
-        
-        // Redirect based on user type
-        if (response.data.user.userType === 'professional') {
-          router.push('/dashboard/professional');
-        } else {
-          router.push('/dashboard/patient');
-        }
-      } else {
-        toast.error(response.data.message || 'Error en el inicio de sesión');
-      }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Error en el servidor');
-    } finally {
-      setLoading(false);
+    if (!auth || auth.userType !== 'professional') {
+      return res.status(403).json({ success: false, message: 'Solo los profesionales pueden crear la sesión' });
     }
-  };
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md mx-auto">
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-          placeholder="tu@email.com"
-        />
-      </div>
+    const { consultationId, description } = req.body;
+    if (!consultationId) {
+      return res.status(400).json({ success: false, message: 'Se requiere consultationId' });
+    }
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-          Contraseña
-        </label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-          placeholder="••••••••"
-        />
-      </div>
+    const db = (req as any).env?.DB;
+    if (!db) {
+      return res.status(500).json({ success: false, message: 'D1 no está configurado en este entorno' });
+    }
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
-      >
-        {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-      </button>
-    </form>
-  );
+    const streamService = initializeStreamService((req as any).env?.CLOUDFLARE_ACCOUNT_ID, (req as any).env?.CLOUDFLARE_API_TOKEN);
+    if (!streamService) {
+      return res.status(500).json({ success: false, message: 'Cloudflare Stream no está configurado' });
+    }
+
+    const streamId = await streamService.createLiveInput(consultationId, description || 'Teleconsulta');
+    if (!streamId) {
+      return res.status(500).json({ success: false, message: 'No se pudo crear el stream de videollamada' });
+    }
+
+    await db
+      .prepare(
+        `UPDATE consultations
+         SET cloudflare_stream_id = ?, cloudflare_stream_url = ?, status = 'in_progress', updated_at = CURRENT_TIMESTAMP
+         WHERE id = ?`
+      )
+      .bind(streamId, streamService.getStreamEmbedUrl(streamId), consultationId)
+      .run();
+
+    return res.status(201).json({
+      success: true,
+      message: 'Videollamada creada correctamente',
+      streamId,
+      embedUrl: streamService.getStreamEmbedUrl(streamId),
+    });
+  } catch (error) {
+    console.error('Stream create error:', error);
+    return res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
 }
