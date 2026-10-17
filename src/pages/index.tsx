@@ -1,4 +1,6 @@
 import Head from 'next/head';
+import Link from 'next/link';
+import { useState } from 'react';
 
 const services = [
   {
@@ -25,7 +27,15 @@ const guarantees = [
   'Seguimiento organizado de visitas, horarios y tratamientos.',
 ];
 
+const professionalTabs = [
+  { id: 'espera', label: 'Lista de espera' },
+  { id: 'preentrenamiento', label: 'Auditoría de IA' },
+  { id: 'biblioteca', label: 'Biblioteca académica' },
+] as const;
+
 export default function HomePage() {
+  const [professionalTab, setProfessionalTab] = useState<(typeof professionalTabs)[number]['id']>('espera');
+
   return (
     <>
       <Head>
@@ -53,6 +63,12 @@ export default function HomePage() {
               <a href="#servicios" className="transition hover:text-white">
                 Servicios
               </a>
+              <a href="#profesionales" className="transition hover:text-white">
+                Profesionales
+              </a>
+              <a href="#pacientes" className="transition hover:text-white">
+                Pacientes
+              </a>
               <a href="#garantia" className="transition hover:text-white">
                 Garantía
               </a>
@@ -61,12 +77,12 @@ export default function HomePage() {
               </a>
             </nav>
 
-            <button
-              type="button"
+            <Link
+              href="/login"
               className="rounded-full border border-cyan-400/40 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-100 transition hover:bg-cyan-500/20"
             >
               Ingreso profesionales
-            </button>
+            </Link>
           </header>
 
           <main className="mt-10 grid items-center gap-8 lg:grid-cols-[1.3fr_0.7fr]">
@@ -86,18 +102,18 @@ export default function HomePage() {
               </div>
 
               <div className="flex flex-wrap gap-4">
-                <button
-                  type="button"
+                <Link
+                  href="/login"
                   className="rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-cyan-500/30 transition hover:scale-[1.02]"
                 >
-                  Solicitar turno para telemedicina
-                </button>
-                <button
-                  type="button"
+                  Ingresar o registrarme
+                </Link>
+                <a
+                  href="#pacientes"
                   className="rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
                 >
-                  Internación domiciliaria
-                </button>
+                  Ver atención para pacientes
+                </a>
               </div>
 
               <div className="grid gap-4 pt-4 sm:grid-cols-3">
@@ -109,63 +125,33 @@ export default function HomePage() {
               </div>
             </section>
 
-            <aside className="rounded-[30px] border border-white/10 bg-gradient-to-b from-white to-slate-100 p-5 text-slate-900 shadow-2xl shadow-cyan-950/40">
+            <aside id="acceso" className="rounded-[30px] border border-white/10 bg-gradient-to-b from-white to-slate-100 p-5 text-slate-900 shadow-2xl shadow-cyan-950/40">
               <div className="mb-5 flex items-center justify-between">
                 <div>
                   <p className="text-xs uppercase tracking-[0.25em] text-slate-500">Acceso</p>
-                  <h3 className="text-2xl font-bold text-slate-900">Ingreso profesionales</h3>
+                  <h3 className="text-2xl font-bold text-slate-900">Acceso unificado</h3>
                 </div>
                 <div className="rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
-                  verificado
+                  seguro
                 </div>
               </div>
 
-              <form className="space-y-4">
-                <div>
-                  <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-700">
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    placeholder="tu.email@dominio.com"
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none ring-0 transition focus:border-cyan-400"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="password" className="mb-2 block text-sm font-medium text-slate-700">
-                    Contraseña
-                  </label>
-                  <input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-400"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
-                >
-                  Ingresar
-                </button>
-              </form>
-
+              <p className="text-sm leading-6 text-slate-600">
+                Ingresá a tu cuenta o creá una nueva para continuar con una atención segura.
+              </p>
               <div className="mt-5 space-y-3">
-                <button
-                  type="button"
-                  className="w-full rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-sm font-semibold text-cyan-800 transition hover:bg-cyan-100"
+                <Link
+                  href="/login"
+                  className="block w-full rounded-2xl bg-slate-900 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-slate-800"
                 >
-                  Solicitar turno para telemedicina
-                </button>
-                <button
-                  type="button"
-                  className="w-full rounded-2xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-semibold text-indigo-800 transition hover:bg-indigo-100"
+                  Iniciar sesión
+                </Link>
+                <Link
+                  href="/login"
+                  className="block w-full rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-center text-sm font-semibold text-cyan-800 transition hover:bg-cyan-100"
                 >
-                  Gestionar internación domiciliaria
-                </button>
+                  Crear una cuenta
+                </Link>
               </div>
             </aside>
           </main>
@@ -235,6 +221,176 @@ export default function HomePage() {
                   </li>
                 ))}
               </ul>
+            </div>
+          </section>
+
+          <section id="profesionales" className="mt-14 scroll-mt-8 rounded-[30px] border border-white/10 bg-white p-6 text-slate-900 shadow-2xl shadow-slate-950/20 sm:p-8">
+            <div className="flex flex-col gap-5 border-b border-slate-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-700">Vista previa profesional</p>
+                <h3 className="mt-3 text-3xl font-black text-slate-900">Un espacio de trabajo para cada consulta</h3>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
+                  Revisá la lista de espera, la sala de teleconsulta y las herramientas de apoyo desde un mismo panel.
+                </p>
+              </div>
+              <Link
+                href="/login"
+                className="inline-flex shrink-0 items-center justify-center rounded-full bg-cyan-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-cyan-800"
+              >
+                Acceder al panel
+              </Link>
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="Secciones del panel profesional">
+              {professionalTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  id={`tab-${tab.id}`}
+                  aria-selected={professionalTab === tab.id}
+                  aria-controls={`panel-${tab.id}`}
+                  onClick={() => setProfessionalTab(tab.id)}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                    professionalTab === tab.id
+                      ? 'bg-slate-900 text-white'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {professionalTab === 'espera' && (
+              <div id="panel-espera" role="tabpanel" aria-labelledby="tab-espera" className="mt-5 grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                  <h4 className="font-bold text-slate-900">Pacientes en espera</h4>
+                  <div className="mt-4 space-y-3">
+                    <div className="flex items-center justify-between gap-3 rounded-xl border border-cyan-100 bg-cyan-50 p-4">
+                      <div>
+                        <p className="text-sm font-semibold text-cyan-950">Telemedicina online</p>
+                        <p className="mt-1 text-xs text-slate-600">Consulta virtual · En espera</p>
+                      </div>
+                      <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-cyan-800">01</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-3 rounded-xl border border-amber-100 bg-amber-50 p-4">
+                      <div>
+                        <p className="text-sm font-semibold text-amber-950">Atención presencial</p>
+                        <p className="mt-1 text-xs text-slate-600">Derivación local · SAMCo</p>
+                      </div>
+                      <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-amber-800">02</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h4 className="font-bold text-slate-900">Sala de teleconsulta e historia clínica</h4>
+                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Vista previa</span>
+                  </div>
+                  <div className="mt-4 flex min-h-36 items-center justify-center rounded-xl bg-slate-950 p-6 text-center text-sm text-slate-300">
+                    La sala de videollamada aparecerá aquí al iniciar una consulta.
+                  </div>
+                  <div className="mt-4 rounded-xl bg-slate-50 p-4">
+                    <p className="text-sm font-semibold text-slate-800">Historia clínica</p>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      Espacio para registrar anamnesis, diagnóstico y plan de seguimiento durante la consulta.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {professionalTab === 'preentrenamiento' && (
+              <div id="panel-preentrenamiento" role="tabpanel" aria-labelledby="tab-preentrenamiento" className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700">Revisión profesional</p>
+                <h4 className="mt-2 text-xl font-bold text-slate-900">Auditoría y mejora de herramientas de IA</h4>
+                <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-600">
+                  Un espacio de revisión para analizar conversaciones y proponer correcciones terminológicas antes de aplicarlas.
+                </p>
+                <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-xl border border-slate-200 bg-white p-4">
+                    <p className="text-sm font-semibold text-slate-800">Término detectado</p>
+                    <p className="mt-2 text-sm text-slate-500">Los ejemplos y cambios requieren revisión profesional.</p>
+                  </div>
+                  <div className="rounded-xl border border-slate-200 bg-white p-4">
+                    <p className="text-sm font-semibold text-slate-800">Corrección sugerida</p>
+                    <p className="mt-2 text-sm text-slate-500">Las sugerencias no se aplican automáticamente.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {professionalTab === 'biblioteca' && (
+              <div id="panel-biblioteca" role="tabpanel" aria-labelledby="tab-biblioteca" className="mt-5">
+                <h4 className="font-bold text-slate-900">Biblioteca académica</h4>
+                <p className="mt-2 text-sm text-slate-600">Material de referencia organizado por área profesional.</p>
+                <div className="mt-4 grid gap-4 md:grid-cols-3">
+                  {[
+                    ['Medicina', 'Carrera, especialidades y residencias'],
+                    ['Enfermería y kinesiología', 'Grado y tecnicaturas'],
+                    ['Psicología', 'Apoyo y salud mental'],
+                  ].map(([title, description]) => (
+                    <article key={title} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                      <h5 className="font-semibold text-slate-900">{title}</h5>
+                      <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+
+          <section id="pacientes" className="mt-14 scroll-mt-8 rounded-[30px] border border-white/10 bg-gradient-to-br from-cyan-950 via-slate-900 to-indigo-950 p-6 sm:p-8">
+            <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">Vista previa para pacientes</p>
+                <h3 className="mt-3 text-3xl font-black text-white">Acompañamiento también mientras esperás</h3>
+                <p className="mt-4 text-sm leading-7 text-slate-300">
+                  Consultá el estado de tu atención y prepará tus preguntas para el equipo profesional.
+                </p>
+                <Link
+                  href="/login"
+                  className="mt-6 inline-flex rounded-full bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
+                >
+                  Ingresar como paciente
+                </Link>
+              </div>
+
+              <div className="rounded-[24px] border border-white/10 bg-white p-5 text-slate-900 shadow-2xl">
+                <div className="flex items-center justify-between gap-3 border-b border-slate-200 pb-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Sala de espera virtual</p>
+                    <h4 className="mt-1 font-bold text-slate-900">Tu atención</h4>
+                  </div>
+                  <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    En espera
+                  </span>
+                </div>
+                <div className="mt-4 rounded-2xl bg-cyan-50 p-4">
+                  <p className="font-semibold text-cyan-950">Estamos preparando tu consulta</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                    Un profesional te atenderá cuando sea tu turno. Si necesitás ayuda, contactá al equipo de atención.
+                  </p>
+                </div>
+                <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 font-bold text-indigo-700">D4</div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">Divia4</p>
+                      <p className="text-xs text-slate-500">Orientación inicial</p>
+                    </div>
+                  </div>
+                  <p className="mt-3 rounded-xl bg-white p-3 text-sm leading-6 text-slate-600">
+                    Hola. Podés preparar tus dudas para conversar con el profesional durante la consulta.
+                  </p>
+                  <p className="mt-3 text-xs text-slate-500">
+                    Esta vista previa no envía mensajes ni reemplaza la orientación de un profesional.
+                  </p>
+                </div>
+              </div>
             </div>
           </section>
         </div>
